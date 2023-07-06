@@ -88,7 +88,7 @@ class Recipe(models.Model):
             MinValueValidator(
                 1,
                 message=TIME_VALIDATE_ERROR
-                )
+            )
         ]
     )
     ingredients = models.ManyToManyField(
