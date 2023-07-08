@@ -8,6 +8,7 @@ User = get_user_model()
 
 FIELD_MAX_LENGTH = 200
 HEX_MAX_LENGTH = 7
+HEX_REGEX = '^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$'
 HEX_VALIDATE_ERROR = 'Введенное значение не является цветом в формате HEX'
 TIME_VALIDATE_ERROR = 'Нельзя указать время менее 1 минуты'
 INGREDIENT_VALIDATE_ERROR = 'Не может быть менее 1 ингридиента'
@@ -44,7 +45,7 @@ class Tag(models.Model):
         max_length=HEX_MAX_LENGTH,
         validators=[
             RegexValidator(
-                regex='^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$',
+                regex=HEX_REGEX,
                 message=HEX_VALIDATE_ERROR
             )
         ]
@@ -70,7 +71,6 @@ class Recipe(models.Model):
     )
     author = models.ForeignKey(
         User,
-        related_name='recipes',
         on_delete=models.SET_NULL,
         null=True,
         verbose_name='Автор',
@@ -94,17 +94,16 @@ class Recipe(models.Model):
     ingredients = models.ManyToManyField(
         Ingredient,
         through='IngredientInRecipe',
-        related_name='recipes',
         verbose_name='Ингредиенты'
     )
     tags = models.ManyToManyField(
         Tag,
-        related_name='recipes',
         verbose_name='Теги'
     )
 
     class Meta:
         ordering = ['-id']
+        related_name = 'recipes'
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
 
@@ -149,17 +148,16 @@ class Favorite(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='favorites',
         verbose_name='Пользователь',
     )
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name='favorites',
         verbose_name='Рецепт',
     )
 
     class Meta:
+        related_name = 'favorites'
         verbose_name = 'Избранное'
         verbose_name_plural = 'Избранное'
         constraints = [
@@ -176,17 +174,16 @@ class ShoppingCart(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='shopping_cart',
         verbose_name='Пользователь',
     )
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name='shopping_cart',
         verbose_name='Рецепт',
     )
 
     class Meta:
+        related_name = 'shopping_cart'
         verbose_name = 'Корзина покупок'
         verbose_name_plural = 'Корзины покупок'
         constraints = [
