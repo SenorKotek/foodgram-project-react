@@ -3,6 +3,8 @@ from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models
 from django.db.models import UniqueConstraint
 
+from api.views import CartIngredientsQuerySet
+
 User = get_user_model()
 
 
@@ -132,6 +134,7 @@ class IngredientInRecipe(models.Model):
             )
         ]
     )
+    objects = CartIngredientsQuerySet.as_manager()
 
     class Meta:
         verbose_name = 'Ингредиент в рецепте'

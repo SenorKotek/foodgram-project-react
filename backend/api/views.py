@@ -1,5 +1,5 @@
 from datetime import datetime
-from django.db.models import Sum
+from django.db.models import Sum, QuerySet
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
@@ -39,6 +39,16 @@ class TagViewSet(ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
     permission_classes = (IsAdminOrReadOnly,)
+
+
+class CartIngredientsQuerySet(QuerySet):
+    def get_ingredients(self, user):
+        return self.filter(
+            recipe__shopping_cart__user=user
+        ).values(
+            'ingredient__name',
+            'ingredient__measurement_unit'
+        ).annotate(amount=Sum('amount'))
 
 
 class RecipeViewSet(ModelViewSet):
@@ -137,23 +147,17 @@ class RecipeViewSet(ModelViewSet):
         permission_classes=[IsAuthenticated]
     )
     def download_shopping_cart(self, request):
-        user = request.user
-        if not user.shopping_cart.exists():
+        if not request.user.shopping_cart.exists():
             return Response(
                 {'errors': CART_EXISTS_ERROR},
                 status=HTTP_400_BAD_REQUEST
             )
 
-        ingredients = IngredientInRecipe.objects.filter(
-            recipe__shopping_cart__user=request.user
-        ).values(
-            'ingredient__name',
-            'ingredient__measurement_unit'
-        ).annotate(amount=Sum('amount'))
+        ingredients = IngredientInRecipe.objects.get_ingredients(request.user)
 
         today = datetime.today()
         shopping_list = (
-            f'Список покупок для: {user.get_full_name()}\n\n'
+            f'Список покупок для: {request.user.get_full_name()}\n\n'
             f'Дата: {today:%Y-%m-%d}\n\n'
         )
         shopping_list += '\n'.join([
@@ -164,7 +168,7 @@ class RecipeViewSet(ModelViewSet):
         ])
         shopping_list += f'\n\nFoodgram ({today:%Y})'
 
-        filename = f'{user.username}_shopping_list.txt'
+        filename = f'{request.user.username}_shopping_list.txt'
         response = HttpResponse(
             shopping_list,
             content_type='text/plain'

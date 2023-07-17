@@ -20,7 +20,7 @@ class CustomUserViewSet(UserViewSet):
 
     @action(
         detail=True,
-        methods=['post', 'delete'],
+        methods=['post'],
         permission_classes=[IsAuthenticated]
     )
     def subscribe(self, request, **kwargs):
@@ -30,31 +30,36 @@ class CustomUserViewSet(UserViewSet):
             User,
             id=author_id
         )
-
-        if request.method == 'POST':
-            serializer = SubscribeSerializer(
+        serializer = SubscribeSerializer(
                 author,
                 data=request.data,
                 context={"request": request}
             )
-            serializer.is_valid(raise_exception=True)
-            Subscriptions.objects.create(
-                user=user,
-                author=author
-            )
-            return Response(
+        serializer.is_valid(raise_exception=True)
+        Subscriptions.objects.create(
+            user=user,
+            author=author
+        )
+        return Response(
                 serializer.data,
                 status=status.HTTP_201_CREATED
-            )
+        )
 
-        if request.method == 'DELETE':
-            subscription = get_object_or_404(
-                Subscriptions,
-                user=user,
-                author=author
-            )
-            subscription.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
+    @subscribe.mapping.delete
+    def unsubscribe(self, request, **kwargs):
+        user = request.user
+        author_id = self.kwargs.get('id')
+        author = get_object_or_404(
+            User,
+            id=author_id
+        )
+        subscription = get_object_or_404(
+            Subscriptions,
+            user=user,
+            author=author
+        )
+        subscription.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(
         detail=False,

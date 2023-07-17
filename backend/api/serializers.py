@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.db import transaction
 from django.db.models import F
+from django.http import Http404
 from django.shortcuts import get_object_or_404
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from drf_extra_fields.fields import Base64ImageField
@@ -70,11 +71,15 @@ class SubscribeSerializer(CustomUserSerializer):
     def validate(self, data):
         author = self.instance
         user = self.context.get('request').user
-        if Subscriptions.objects.filter(author=author, user=user).exists():
+        try:
+            get_object_or_404(Subscriptions, author=author, user=user)
             raise ValidationError(
                 detail=DOUBLE_SUBSCRIPTION_ERROR,
                 code=status.HTTP_400_BAD_REQUEST
             )
+        except Http404:
+            pass
+
         if user == author:
             raise ValidationError(
                 detail=SELF_SUBSCRIPTION_ERROR,
