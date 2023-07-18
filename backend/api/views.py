@@ -2,7 +2,6 @@ from datetime import datetime
 
 from dish_recipes.models import (Favorite, Ingredient, IngredientInRecipe,
                                  Recipe, ShoppingCart, Tag)
-from django.db.models import QuerySet, Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
@@ -39,16 +38,6 @@ class TagViewSet(ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
     permission_classes = (IsAdminOrReadOnly,)
-
-
-class CartIngredientsQuerySet(QuerySet):
-    def get_ingredients(self, user):
-        return self.filter(
-            recipe__shopping_cart__user=user
-        ).values(
-            'ingredient__name',
-            'ingredient__measurement_unit'
-        ).annotate(amount=Sum('amount'))
 
 
 class RecipeViewSet(ModelViewSet):
