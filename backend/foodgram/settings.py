@@ -30,7 +30,6 @@ INSTALLED_APPS = [
 
     'users',
     'dish_recipes',
-    'core',
     'api',
 ]
 

@@ -70,6 +70,7 @@ jobs:
           context: ./frontend
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/foodgram-frontend:latest
+  
   build_gateway_and_push_to_docker_hub:
     name: Push gateway Docker image to DockerHub
     runs-on: ubuntu-latest
@@ -123,6 +124,9 @@ jobs:
             sudo docker compose pull backend
             sudo docker compose rm frontend
             sudo docker compose pull frontend
+            sudo docker compose rm nginx
+            sudo docker compose pull nginx
+            nginx
             
             sudo docker compose up -d --build
 
