@@ -13,7 +13,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-CSRF_TRUSTED_ORIGINS = ['http://localhost', ]
+CSRF_TRUSTED_ORIGINS = ['http://localhost', 'pankotekfoodgram.ddns.net', ]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
