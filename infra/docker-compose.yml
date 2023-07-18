@@ -5,7 +5,7 @@ services:
   db:
     image: postgres:13.0-alpine
     volumes:
-      - postgres_data:/var/lib/postgresql/data/
+      - pg_data:/var/lib/postgresql/data/
     env_file:
       - ./.env
     restart: always
@@ -14,9 +14,8 @@ services:
     image: senorkotek/foodgram-backend:latest
     restart: always
     volumes:
-      - static_value:/app/static/
-      - media_value:/app/media/
-      - redoc:/app/api/docs/
+      - static:/app/static/
+      - media:/app/media/
     depends_on:
       - db
     env_file:
@@ -28,20 +27,17 @@ services:
       - ../frontend/:/app/result_build/
 
   gateway:
-    build: ./nginx/
-    env_file: .env
+    build: senorkotek/foodgram-gateway:latest
     ports:
       - 8000:80
     volumes:
       - static:/static/
       - media:/media
-      - redoc:/api/docs/
     depends_on:
       - backend
     restart: always
 
 volumes:
-  static_value:
-  media_value:
-  postgres_data:
-  redoc:
+  static:
+  media:
+  pg_data:
