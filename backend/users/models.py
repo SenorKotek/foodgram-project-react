@@ -5,7 +5,7 @@ from django.db.models import UniqueConstraint
 FIELD_MAX_LENGTH = 250
 
 
-class FoodgramUser(AbstractUser):
+class User(AbstractUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = [
         'username',
@@ -29,13 +29,13 @@ class FoodgramUser(AbstractUser):
 
 class Subscriptions(models.Model):
     user = models.ForeignKey(
-        FoodgramUser,
+        User,
         on_delete=models.CASCADE,
         related_name='subscriber',
         verbose_name="Подписчик",
     )
     author = models.ForeignKey(
-        FoodgramUser,
+        User,
         on_delete=models.CASCADE,
         related_name='subscribing',
         verbose_name="Автор",

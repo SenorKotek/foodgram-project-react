@@ -1,10 +1,10 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from users.models import FoodgramUser, Subscriptions
+from users.models import User, Subscriptions
 
 
-@admin.register(FoodgramUser)
-class FoodgramUserAdmin(UserAdmin):
+@admin.register(User)
+class UserAdmin(UserAdmin):
     list_display = (
         "is_active",
         "username",
