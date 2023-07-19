@@ -60,8 +60,9 @@ class RecipeViewSet(ModelViewSet):
         methods=['post'],
         permission_classes=[IsAuthenticated]
     )
-    def favorite(self, model, user, pk):
+    def favorite(self, model, request, user, pk):
         model = Favorite
+        user = request.user
         if model.objects.filter(user=user, recipe__id=pk).exists():
             return Response(
                 {'errors': RECIPE_COPY_ERROR},
@@ -79,8 +80,9 @@ class RecipeViewSet(ModelViewSet):
         )
 
     @favorite.mapping.delete
-    def delete_favorite(self, model, user, pk):
+    def delete_favorite(self, model, request, user, pk):
         model = Favorite
+        user = request.user
         obj = model.objects.filter(
             user=user,
             recipe__id=pk
@@ -98,8 +100,9 @@ class RecipeViewSet(ModelViewSet):
         methods=['post'],
         permission_classes=[IsAuthenticated]
     )
-    def shopping_cart(self, model, user, pk):
+    def shopping_cart(self, model, request, user, pk):
         model = ShoppingCart
+        user = request.user
         if model.objects.filter(user=user, recipe__id=pk).exists():
             return Response(
                 {'errors': RECIPE_CART_COPY_ERROR},
@@ -117,8 +120,9 @@ class RecipeViewSet(ModelViewSet):
         )
 
     @shopping_cart.mapping.delete
-    def delete_shopping_cart(self, model, user, pk):
+    def delete_shopping_cart(self, request, model, user, pk):
         model = ShoppingCart
+        user = request.user
         obj = model.objects.filter(
             user=user,
             recipe__id=pk
