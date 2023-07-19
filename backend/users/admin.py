@@ -1,9 +1,9 @@
-from django.contrib.admin import register
+from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from users.models import FoodgramUser
+from users.models import FoodgramUser, Subscriptions
 
 
-@register(FoodgramUser)
+@admin.register(FoodgramUser)
 class FoodgramUserAdmin(UserAdmin):
     list_display = (
         "is_active",
@@ -22,3 +22,8 @@ class FoodgramUserAdmin(UserAdmin):
         "email",
     )
     save_on_top = True
+
+
+@admin.register(Subscriptions)
+class SubscribeAdmin(admin.ModelAdmin):
+    list_display = ('user', 'author',)
