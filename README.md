@@ -60,18 +60,3 @@ sudo docker compose exec backend python manage.py loaddata ingredients.json
 - Разворачивают проект на удаленном сервере
 - Отправляют сообщения в Telegram в случае успеха
 
-### Над проектом страдал:
-
-SenorKotek
-
-### Данные суперюзера для ревью:
-
-ip-адрес сервера: 158.160.68.42
-
-Адрес сайта: http://pankotekfoodgram.ddns.net
-
-Логин: nakxwest@yandex.ru
-
-Пароль: ImSoTired
-
-Телеграм-канал с котами, который ведет автор проекта, чтоб ревьювер смог пережить полученные психологические травмы: https://t.me/imacat
